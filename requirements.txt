@@ -22,3 +22,4 @@ librosa
 soundfile
 matplotlib
 python-dotenv
+ffmpeg-python
