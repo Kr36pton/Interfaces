@@ -11,8 +11,8 @@ def load_model(size="base"):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     return whisper.load_model(size, device=device), device
 
-def decode_audio(file_bytes):
-    # Leer bytes -> waveform con soundfile
+def decode_wav(file_bytes):
+    """Leer WAV -> numpy float32"""
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
         tmp.write(file_bytes)
         tmp.flush()
@@ -23,7 +23,6 @@ def decode_audio(file_bytes):
     return data.astype(np.float32), samplerate
 
 def run_inference(model, device, audio_np, sr, task="transcribe"):
-    # Re-samplear a 16k si no coincide
     if sr != 16000:
         import librosa
         audio_np = librosa.resample(audio_np, orig_sr=sr, target_sr=16000)
@@ -37,12 +36,11 @@ def run_inference(model, device, audio_np, sr, task="transcribe"):
 
     options = whisper.DecodingOptions(task=task)
     result = whisper.decode(model, mel, options)
-
     return result.text, lang_detected
 
 def render():
     st.title("Voz → Texto (Whisper sin ffmpeg)")
-    st.markdown("Sube o graba audio para transcribir o traducir sin depender de ffmpeg.")
+    st.markdown("Solo se aceptan archivos **WAV** para garantizar compatibilidad sin ffmpeg/ffprobe.")
 
     col1, col2 = st.columns([1,1])
     with col1:
@@ -50,11 +48,10 @@ def render():
     with col2:
         model_size = st.selectbox("Modelo Whisper", ["tiny", "base", "small"], index=1)
 
-    # Traducir: Whisper solo soporta traducción al inglés, se advierte
     if mode == "Traducir":
         st.info("Whisper solo traduce al inglés en este modo.")
 
-    uploaded_file = st.file_uploader("Subir archivo de audio (wav, mp3, ogg, m4a)", type=["wav","mp3","ogg","m4a"])
+    uploaded_file = st.file_uploader("Subir archivo de audio (solo WAV)", type=["wav"])
 
     st.markdown("### O grabar desde el navegador")
     audio = audiorecorder("Grabar", "Detener")
@@ -70,8 +67,11 @@ def render():
         with st.spinner("Procesando..."):
             try:
                 model, device = load_model(model_size)
-                audio_np, sr = decode_audio(audio_bytes)
-                text, lang = run_inference(model, device, audio_np, sr, task="translate" if mode=="Traducir" else "transcribe")
+                audio_np, sr = decode_wav(audio_bytes)
+                text, lang = run_inference(
+                    model, device, audio_np, sr,
+                    task="translate" if mode=="Traducir" else "transcribe"
+                )
             except Exception as e:
                 st.error(f"Error: {e}")
                 return
