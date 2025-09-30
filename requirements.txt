@@ -26,6 +26,6 @@ ffmpeg-python
 streamlit-audiorecorder
 soundfile
 librosa
-vosk>=0.3.50
+vosk
 requests
-googletrans==4.0.0-rc1
+googletrans
