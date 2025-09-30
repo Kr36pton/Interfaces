@@ -4,12 +4,6 @@ def render():
     st.markdown('<div class="page-card">', unsafe_allow_html=True)
     st.title("Suite Multimedia — Herramientas de IA y Procesamiento")
     st.markdown("**Kit de herramientas** para conversión de audio, OCR, NLP, detección de objetos y más.")
-    st.image(
-        "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1400&q=80",
-        caption="Interfaz unificada — herramientas modulares",
-        use_column_width=True,
-    )
-
     st.markdown("### Qué contiene este sitio")
     st.markdown(
         """
