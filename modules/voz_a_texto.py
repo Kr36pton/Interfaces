@@ -3,28 +3,23 @@ import whisper
 import torch
 import numpy as np
 import soundfile as sf
-import tempfile
-import os
 from audiorecorder import audiorecorder
+import librosa
 
 def load_model(size="base"):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     return whisper.load_model(size, device=device), device
 
 def decode_wav(file_bytes):
-    """Leer WAV -> numpy float32"""
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-        tmp.write(file_bytes)
-        tmp.flush()
-        data, samplerate = sf.read(tmp.name, always_2d=False)
-        os.remove(tmp.name)
-    if data.ndim > 1:  # estéreo a mono
+    # Leer audio wav directamente desde bytes
+    import io
+    data, samplerate = sf.read(io.BytesIO(file_bytes), always_2d=False)
+    if data.ndim > 1:
         data = np.mean(data, axis=1)
     return data.astype(np.float32), samplerate
 
 def run_inference(model, device, audio_np, sr, task="transcribe"):
     if sr != 16000:
-        import librosa
         audio_np = librosa.resample(audio_np, orig_sr=sr, target_sr=16000)
         sr = 16000
 
@@ -40,7 +35,7 @@ def run_inference(model, device, audio_np, sr, task="transcribe"):
 
 def render():
     st.title("Voz → Texto (Whisper sin ffmpeg)")
-    st.markdown("Solo se aceptan archivos **WAV** para garantizar compatibilidad sin ffmpeg/ffprobe.")
+    st.markdown("Procesa archivos WAV o grabaciones directas. No requiere ffmpeg/ffprobe.")
 
     col1, col2 = st.columns([1,1])
     with col1:
