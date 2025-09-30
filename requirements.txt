@@ -6,7 +6,6 @@ opencv-python
 numpy
 torch
 torchvision
-torchaudio
 ultralytics
 easyocr
 pandas
@@ -21,7 +20,6 @@ librosa
 soundfile
 matplotlib
 python-dotenv
-ffmpeg-python
 streamlit-audiorecorder
 soundfile
 librosa
