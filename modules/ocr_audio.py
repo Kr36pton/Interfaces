@@ -1,26 +1,26 @@
 import streamlit as st
 from PIL import Image
-import easyocr
 import numpy as np
-import io
+import easyocr
+from googletrans import Translator
 from gtts import gTTS
 import tempfile
+import io
 import uuid
-from googletrans import Translator
 
 def render():
     st.title("OCR → Traducción → Audio")
-    st.markdown("Extrae texto de una imagen, tradúcelo a otro idioma y genera audio descargable.")
+    st.markdown("Extrae texto de imágenes, tradúcelo y genera audio en el idioma deseado.")
 
     # Cargar imagen
     uploaded_file = st.file_uploader(
-        "Sube una imagen (JPG, PNG, TIFF, BMP)",
-        type=["jpg", "jpeg", "png", "tiff", "bmp"]
+        "Sube una imagen (JPG, PNG, JPEG)",
+        type=["jpg", "jpeg", "png"]
     )
 
-    # Selección de idioma destino
+    # Idioma destino para la traducción y audio
     target_lang = st.selectbox(
-        "Selecciona el idioma de traducción",
+        "Selecciona idioma de destino",
         [
             ("es", "Español"),
             ("en", "Inglés"),
@@ -32,41 +32,46 @@ def render():
         format_func=lambda x: x[1]
     )[0]
 
-    if uploaded_file:
-        image = Image.open(io.BytesIO(uploaded_file.read()))
+    if uploaded_file is not None:
+        # Mostrar imagen
+        image = Image.open(uploaded_file)
         st.image(image, caption="Imagen cargada", use_container_width=True)
 
-        if st.button("Procesar"):
-            with st.spinner("Extrayendo texto..."):
-                reader = easyocr.Reader(['es','en'])
+        if st.button("Procesar imagen"):
+            # OCR con EasyOCR
+            with st.spinner("Ejecutando OCR..."):
+                reader = easyocr.Reader(['es', 'en'])
                 result = reader.readtext(np.array(image), detail=0)
-                extracted_text = "\n".join(result).strip()
+                text = "\n".join(result).strip()
 
-            if not extracted_text:
+            if not text:
                 st.warning("No se detectó texto en la imagen.")
                 return
 
             st.markdown("### Texto detectado")
-            st.text_area("Resultado OCR", extracted_text, height=200)
+            st.text_area("OCR", text, height=200)
 
+            # Traducción con Googletrans
             with st.spinner("Traduciendo texto..."):
                 translator = Translator()
-                translation = translator.translate(extracted_text, dest=target_lang).text
+                translation = translator.translate(text, dest=target_lang).text
 
             st.markdown("### Traducción")
-            st.text_area("Texto traducido", translation, height=200)
+            st.text_area("Traducción", translation, height=200)
 
+            # Conversión a audio con gTTS
             with st.spinner("Generando audio..."):
                 try:
                     tts = gTTS(text=translation, lang=target_lang)
-                    tmp_fp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-                    tts.save(tmp_fp.name)
+                    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+                    tts.save(tmp_file.name)
                 except Exception as e:
                     st.error(f"Error al generar audio: {e}")
                     return
 
-            with open(tmp_fp.name, "rb") as audio_file:
-                audio_bytes = audio_file.read()
+            # Reproducir y descargar
+            with open(tmp_file.name, "rb") as f:
+                audio_bytes = f.read()
 
             st.audio(audio_bytes, format="audio/mp3")
 
