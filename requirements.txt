@@ -24,3 +24,5 @@ matplotlib
 python-dotenv
 ffmpeg-python
 streamlit-audiorecorder
+soundfile
+librosa
