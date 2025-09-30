@@ -21,8 +21,6 @@ soundfile
 matplotlib
 python-dotenv
 streamlit-audiorecorder
-soundfile
-librosa
-vosk
+vosk>=0.3.50
 requests
-googletrans
+googletrans==4.0.0-rc1
