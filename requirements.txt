@@ -22,4 +22,3 @@ librosa
 soundfile
 matplotlib
 python-dotenv
-vosk==0.3.72
