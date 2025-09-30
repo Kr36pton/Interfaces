@@ -1,11 +1,13 @@
 streamlit>=1.20.0
 pillow
 gTTS
+whisper
 pytesseract
 opencv-python
 numpy
 torch
 torchvision
+torchaudio
 ultralytics
 easyocr
 pandas
@@ -20,7 +22,3 @@ librosa
 soundfile
 matplotlib
 python-dotenv
-streamlit-audiorecorder
-vosk>=0.3.50
-requests
-googletrans==4.0.0-rc1
