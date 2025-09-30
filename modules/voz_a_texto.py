@@ -3,7 +3,6 @@ import io
 import wave
 import json
 from vosk import Model, KaldiRecognizer
-from audiorecorder import audiorecorder
 
 # Cargar modelo Vosk (pequeño en español)
 @st.cache_resource
@@ -30,19 +29,15 @@ def transcribe(wav_bytes, model):
 
 def render():
     st.title("Voz → Texto (Vosk offline)")
-    st.markdown("Sube un archivo WAV o graba audio y obtén transcripción sin ffmpeg.")
+    st.markdown("Sube un archivo WAV y obtén la transcripción sin ffmpeg.")
 
+    # Solo subir archivo WAV
     uploaded = st.file_uploader("Subir archivo WAV", type=["wav"])
-
-    st.markdown("### O grabar desde el navegador")
-    audio = audiorecorder("Grabar", "Detener")
 
     wav_bytes = None
     if uploaded is not None:
         wav_bytes = uploaded.read()
-    elif audio is not None and len(audio) > 0:
-        wav_bytes = audio.tobytes()
-        st.audio(wav_bytes, format="audio/wav")
+        st.audio(wav_bytes, format="audio/wav")  # Opcional: escuchar el audio subido
 
     if wav_bytes and st.button("Procesar audio"):
         with st.spinner("Transcribiendo..."):
