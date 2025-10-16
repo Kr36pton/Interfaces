@@ -7,47 +7,67 @@ st.set_page_config(
     layout="wide",
 )
 
-# Estilos: restaurar colores y contraste; eliminar fondos personalizados previos
+# Estilos: forzar esquema claro y buen contraste. Ocultar menú nativo.
 st.markdown(
     """
     <style>
       /* Ocultar navegación multipágina nativa */
-      section[data-testid="stSidebarNav"] { display: none; }
+      section[data-testid="stSidebarNav"] { display: none !important; }
 
-      /* Reset de fondos para evitar sobreexposición / bajo contraste */
+      /* Forzar fondo claro y texto oscuro en toda la app */
       html, body,
+      .stApp,
       [data-testid="stAppViewContainer"],
-      .stApp, .main,
-      [data-testid="stHeader"] {
-        background: unset !important;
+      [data-testid="stHeader"],
+      [data-testid="stToolbar"],
+      [data-testid="stMainBlockContainer"],
+      [data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        color: #111111 !important;
         filter: none !important;
         opacity: 1 !important;
       }
 
-      /* Sidebar limpio sin alterar el tema */
-      [data-testid="stSidebar"] {
-        background: unset !important;
+      /* Tipografías y encabezados en negro */
+      h1, h2, h3, h4, h5, h6,
+      .stMarkdown, .stText, .stCaption, label, p, span, div {
+        color: #111111 !important;
       }
 
-      /* Tarjetas opcionales */
+      /* Inputs, botones, radios y tablas con bordes suaves en claro */
+      .stButton>button,
+      .stDownloadButton>button,
+      .st-radio [role="radiogroup"] label,
+      .stTextInput input,
+      .stTextArea textarea,
+      .stSelectbox [data-baseweb="select"] {
+        color: #111111 !important;
+        background: #ffffff !important;
+        border: 1px solid #e6e6e6 !important;
+        border-radius: 10px !important;
+      }
+
+      /* Sidebar visual limpio */
+      [data-testid="stSidebar"] .stMarkdown h1,
+      [data-testid="stSidebar"] .stMarkdown h2,
+      [data-testid="stSidebar"] .stMarkdown h3 {
+        color: #111111 !important;
+      }
+
+      /* Tarjeta opcional para secciones */
       .page-card {
-        background: rgba(255,255,255,0.95);
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        background: #ffffff !important;
+        border: 1px solid #efefef !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
       }
-
-      /* Botones */
-      .stButton>button { border-radius: 10px; }
-
-      /* Radio label accesible manteniendo UI limpia */
-      .sidebar-radio-label { font-weight: 600; margin-bottom: .25rem; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Rutas de páginas: tolera estructura modules/* o src/pages/*
+# Páginas: permitir dos ubicaciones (modules/* o src/pages/*)
 PAGES = {
     "Inicio": ["modules.inicio", "src.pages.inicio"],
     "Texto → Audio (gTTS)": ["modules.texto_a_audio", "src.pages.texto_a_audio"],
