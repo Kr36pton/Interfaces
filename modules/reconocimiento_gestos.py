@@ -1,6 +1,3 @@
-`modules/gestos.py`
-
-```python
 import streamlit as st
 import io
 import os
