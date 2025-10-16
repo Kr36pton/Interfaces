@@ -22,3 +22,6 @@ librosa
 soundfile
 matplotlib
 python-dotenv
+textblob
+nltk
+scikit-learn
