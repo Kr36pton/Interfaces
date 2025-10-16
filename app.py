@@ -7,21 +7,47 @@ st.set_page_config(
     layout="wide",
 )
 
-# Ocultar navegación nativa autogenerada
+# Estilos: restaurar colores y contraste; eliminar fondos personalizados previos
 st.markdown(
     """
     <style>
-      section[data-testid="stSidebarNav"] {display: none;}
-      :root{ --bg:#fffaf8; --card:#ffffff; --muted:#8a7e79; }
-      .stApp, .main { background: var(--bg); }
-      .page-card { background: var(--card); border-radius:12px; padding:20px; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
-      .stButton>button { border-radius:10px; }
+      /* Ocultar navegación multipágina nativa */
+      section[data-testid="stSidebarNav"] { display: none; }
+
+      /* Reset de fondos para evitar sobreexposición / bajo contraste */
+      html, body,
+      [data-testid="stAppViewContainer"],
+      .stApp, .main,
+      [data-testid="stHeader"] {
+        background: unset !important;
+        filter: none !important;
+        opacity: 1 !important;
+      }
+
+      /* Sidebar limpio sin alterar el tema */
+      [data-testid="stSidebar"] {
+        background: unset !important;
+      }
+
+      /* Tarjetas opcionales */
+      .page-card {
+        background: rgba(255,255,255,0.95);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      }
+
+      /* Botones */
+      .stButton>button { border-radius: 10px; }
+
+      /* Radio label accesible manteniendo UI limpia */
+      .sidebar-radio-label { font-weight: 600; margin-bottom: .25rem; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Cada entrada puede listar varios módulos candidatos para tolerar estructuras distintas (modules/* o src/pages/*)
+# Rutas de páginas: tolera estructura modules/* o src/pages/*
 PAGES = {
     "Inicio": ["modules.inicio", "src.pages.inicio"],
     "Texto → Audio (gTTS)": ["modules.texto_a_audio", "src.pages.texto_a_audio"],
@@ -30,7 +56,6 @@ PAGES = {
     "NLP: Sentimiento, TF-IDF y Palabras clave": ["modules.nlp_textblob", "src.pages.nlp_textblob"],
     "Identificación de objetos (YOLO)": ["modules.yolo_objetos", "src.pages.yolo_objetos"],
     "Identificación de gestos (Teachable Machine)": ["modules.gestos", "src.pages.gestos"],
-    # Si en el futuro habilitas OCR → Traducción → Audio, añade aquí su ruta.
 }
 
 def import_first(candidates):
@@ -49,7 +74,7 @@ with st.sidebar:
         "Selecciona una página:",
         list(PAGES.keys()),
         index=0,
-        label_visibility="collapsed",  # evita warning de accesibilidad manteniendo la UI limpia
+        label_visibility="collapsed",
     )
 
 module_candidates = PAGES[choice]
