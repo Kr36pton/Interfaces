@@ -27,3 +27,4 @@ nltk
 scikit-learn
 tensorflow-cpu
 googletrans
+PyPDF2
