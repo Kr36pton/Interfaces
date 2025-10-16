@@ -25,4 +25,5 @@ python-dotenv
 textblob
 nltk
 scikit-learn
-
+tensorflow-cpu
+googletrans
