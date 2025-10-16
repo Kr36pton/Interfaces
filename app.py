@@ -45,14 +45,15 @@ st.markdown(
 # Mapeo a un solo módulo por página
 PAGES = {
     "Inicio": "modules.inicio",
-    "Texto → Audio (gTTS)": "modules.texto_a_audio",
-    "Voz → Texto (Vosk)": "modules.voz_a_texto",
-    "OCR (Imagen → Texto)": "modules.ocr",
-    "OCR → Traducción → Audio": "modules.ocr_audio",
-    "NLP: Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
-    "Identificación de objetos (YOLO)": "modules.deteccion_objetos",
-    "Identificación de gestos (Teachable Machine)": "modules.reconocimiento_gestos",
+    "Texto a Audio": "modules.texto_a_audio",
+    "Voz a Texto": "modules.voz_a_texto",
+    "Imagen a Texto": "modules.ocr",
+    "Traducción a Audio": "modules.ocr_audio",
+    "Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
+    "Identificación de Objetos": "modules.deteccion_objetos",
+    "Identificación de Gestos": "modules.reconocimiento_gestos",
     "Chatbot PDF": "modules.chatbot_pdf",
+    "Interpretación de Imagen": "modules.interpretacion_imagen",
 }
 
 with st.sidebar:
