@@ -50,8 +50,8 @@ PAGES = {
     "OCR (Imagen → Texto)": "modules.ocr",
     "OCR → Traducción → Audio": "modules.ocr_audio",
     "NLP: Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
-    "Identificación de objetos (YOLO)": "modules.yolo_objetos",
-    "Identificación de gestos (Teachable Machine)": "modules.gestos",
+    "Identificación de objetos (YOLO)": "modules.deteccion_objetos",
+    "Identificación de gestos (Teachable Machine)": "modules.reconocimiento_gestos",
 }
 
 with st.sidebar:
