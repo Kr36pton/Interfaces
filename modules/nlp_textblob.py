@@ -6,15 +6,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import re
 
-# Recursos NLTK (solo necesarios la primera vez)
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords")
+# Descargar recursos NLTK requeridos
+for resource in ["punkt", "punkt_tab", "stopwords"]:
+    try:
+        nltk.data.find(f"tokenizers/{resource}")
+    except LookupError:
+        nltk.download(resource)
 
 from nltk.corpus import stopwords
 
