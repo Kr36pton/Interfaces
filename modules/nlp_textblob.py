@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import re
 
-# Asegurar recursos NLTK básicos
+# Recursos NLTK (solo necesarios la primera vez)
 try:
     nltk.data.find("tokenizers/punkt")
 except LookupError:
@@ -32,9 +32,9 @@ def analyze_sentiment(text):
     return sentiment, subjectivity
 
 def extract_keywords(text, n=10):
-    corpus = [text]
-    vectorizer = TfidfVectorizer(stop_words="spanish")
-    X = vectorizer.fit_transform(corpus)
+    stoplist = stopwords.words("spanish") + stopwords.words("english")
+    vectorizer = TfidfVectorizer(stop_words=stoplist)
+    X = vectorizer.fit_transform([text])
     scores = zip(vectorizer.get_feature_names_out(), X.toarray()[0])
     sorted_scores = sorted(scores, key=lambda x: x[1], reverse=True)
     return [word for word, score in sorted_scores[:n]]
@@ -47,7 +47,8 @@ def word_frequency(text, n=10):
 def question_retrieval(text, question, threshold=0.35):
     sentences = nltk.sent_tokenize(text)
     corpus = [question] + sentences
-    vectorizer = TfidfVectorizer(stop_words="spanish")
+    stoplist = stopwords.words("spanish") + stopwords.words("english")
+    vectorizer = TfidfVectorizer(stop_words=stoplist)
     X = vectorizer.fit_transform(corpus)
     sims = cosine_similarity(X[0:1], X[1:]).flatten()
     best_idx = np.argmax(sims)
@@ -58,22 +59,22 @@ def question_retrieval(text, question, threshold=0.35):
 
 def render():
     st.title("Procesamiento de Lenguaje Natural — TextBlob / NLTK")
-    st.markdown("Analiza textos en español o inglés para **sentimiento**, **palabras clave**, **frecuencias léxicas** o **responder preguntas**.")
+    st.markdown("Analiza textos: **sentimiento**, **keywords**, **frecuencia** y **preguntas contextuales**.")
 
-    text = st.text_area("Introduce tu texto", height=250)
+    text = st.text_area("Introduce el texto a analizar", height=250)
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        run_sent = st.button("Análisis de Sentimiento")
+        run_sent = st.button("Sentimiento")
     with col2:
-        run_keywords = st.button("Extracción de Keywords (TF-IDF)")
+        run_keywords = st.button("Keywords (TF-IDF)")
     with col3:
-        run_freq = st.button("Análisis de Frecuencia")
+        run_freq = st.button("Frecuencia")
     with col4:
-        run_question = st.button("Pregunta sobre el texto")
+        run_question = st.button("Pregunta")
 
     if not text.strip():
-        st.info("Por favor introduce un texto para analizar.")
+        st.info("Introduce un texto para comenzar.")
         return
 
     if run_sent:
@@ -96,7 +97,7 @@ def render():
         st.write(", ".join(keywords))
 
     if run_freq:
-        with st.spinner("Analizando frecuencia léxica..."):
+        with st.spinner("Analizando frecuencia..."):
             freq = word_frequency(text)
         st.subheader("Palabras más frecuentes")
         for word, count in freq:
@@ -109,7 +110,7 @@ def render():
                 answer, score = question_retrieval(text, question)
             if answer:
                 st.subheader("Respuesta encontrada")
-                st.markdown(f"**Fragmento relevante:** {answer}")
+                st.markdown(f"**Fragmento:** {answer}")
                 st.caption(f"(Similitud: {score:.2f})")
             else:
-                st.warning("No se encontró una respuesta clara. Intenta reformular la pregunta.")
+                st.warning("No se encontró una respuesta clara. Reformula la pregunta.")
