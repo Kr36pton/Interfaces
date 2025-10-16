@@ -223,4 +223,3 @@ def render():
             video_transformer_factory=factory,
             media_stream_constraints={"video": True, "audio": False},
         )
-```
