@@ -107,13 +107,14 @@ st.markdown(
 
 # Páginas: permitir dos ubicaciones (modules/* o src/pages/*)
 PAGES = {
-    "Inicio": ["modules.inicio", "src.pages.inicio"],
-    "Texto → Audio (gTTS)": ["modules.texto_a_audio", "src.pages.texto_a_audio"],
-    "Voz → Texto (Vosk)": ["modules.voz_a_texto", "src.pages.voz_a_texto"],
-    "OCR (Imagen → Texto)": ["modules.ocr", "src.pages.ocr"],
-    "NLP: Sentimiento, TF-IDF y Palabras clave": ["modules.nlp_textblob", "src.pages.nlp_textblob"],
-    "Identificación de objetos (YOLO)": ["modules.yolo_objetos", "src.pages.yolo_objetos"],
-    "Identificación de gestos (Teachable Machine)": ["modules.gestos", "src.pages.gestos"],
+    "Inicio": "modules.inicio",
+    "Texto → Audio (gTTS)": "modules.texto_a_audio",
+    "Voz → Texto (Vosk)": "modules.voz_a_texto",
+    "OCR (Imagen → Texto)": "modules.ocr",
+    "OCR → Traducción → Audio": "modules.ocr_audio",
+    "NLP: Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
+    "Identificación de objetos (YOLO)": "modules.deteccion_objetos",
+    "Identificación de gestos (Teachable Machine)": "modules.reconocimiento_gestos",
 }
 
 def import_first(candidates):
