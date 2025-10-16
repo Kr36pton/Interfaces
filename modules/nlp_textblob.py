@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import re
+import matplotlib.pyplot as plt
 
 # Descargar recursos NLTK requeridos
 for resource in ["punkt", "punkt_tab", "stopwords"]:
@@ -56,7 +57,7 @@ def question_retrieval(text, question, threshold=0.35):
 
 def render():
     st.title("Procesamiento de Lenguaje Natural — TextBlob / NLTK")
-    st.markdown("Analiza textos: **sentimiento**, **keywords**, **frecuencia** y **preguntas contextuales**.")
+    st.markdown("Analiza textos: **sentimiento**, **keywords**, **frecuencia (con gráfico)** y **preguntas contextuales**.")
 
     text = st.text_area("Introduce el texto a analizar", height=250)
 
@@ -97,8 +98,14 @@ def render():
         with st.spinner("Analizando frecuencia..."):
             freq = word_frequency(text)
         st.subheader("Palabras más frecuentes")
-        for word, count in freq:
-            st.write(f"{word}: {count}")
+        words, counts = zip(*freq)
+        fig, ax = plt.subplots()
+        ax.bar(words, counts)
+        ax.set_xlabel("Palabras")
+        ax.set_ylabel("Frecuencia")
+        ax.set_title("Frecuencia de palabras más comunes")
+        plt.xticks(rotation=45, ha="right")
+        st.pyplot(fig)
 
     if run_question:
         question = st.text_input("Escribe tu pregunta sobre el texto:")
