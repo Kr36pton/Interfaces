@@ -7,61 +7,99 @@ st.set_page_config(
     layout="wide",
 )
 
-# Estilos: forzar esquema claro y buen contraste. Ocultar menú nativo.
 st.markdown(
     """
     <style>
-      /* Ocultar navegación multipágina nativa */
+      /* Oculta navegación multipágina nativa */
       section[data-testid="stSidebarNav"] { display: none !important; }
 
-      /* Forzar fondo claro y texto oscuro en toda la app */
-      html, body,
-      .stApp,
+      /* Colores base */
+      :root{
+        --bg:#0f1115;           /* fondo principal */
+        --card:#151924;         /* tarjetas / paneles */
+        --text:#e8e8ea;         /* texto principal */
+        --muted:#a5a8b3;        /* texto secundario */
+        --border:#222634;       /* bordes suaves */
+        --accent:#5b9cff;       /* acento */
+      }
+
+      /* Fondo y texto global */
+      html, body, .stApp,
       [data-testid="stAppViewContainer"],
       [data-testid="stHeader"],
       [data-testid="stToolbar"],
       [data-testid="stMainBlockContainer"],
-      [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        color: #111111 !important;
-        filter: none !important;
-        opacity: 1 !important;
+      [data-testid="stSidebar"]{
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        filter:none !important;
+        opacity:1 !important;
       }
 
-      /* Tipografías y encabezados en negro */
+      /* Tipografía y elementos de texto */
       h1, h2, h3, h4, h5, h6,
       .stMarkdown, .stText, .stCaption, label, p, span, div {
-        color: #111111 !important;
+        color: var(--text) !important;
+      }
+      small, .markdown-text-container p em, .stCaption, .st-emotion-cache-9ycgxx {
+        color: var(--muted) !important;
       }
 
-      /* Inputs, botones, radios y tablas con bordes suaves en claro */
-      .stButton>button,
-      .stDownloadButton>button,
-      .st-radio [role="radiogroup"] label,
-      .stTextInput input,
-      .stTextArea textarea,
-      .stSelectbox [data-baseweb="select"] {
-        color: #111111 !important;
-        background: #ffffff !important;
-        border: 1px solid #e6e6e6 !important;
+      /* Contenedores tipo tarjeta */
+      .page-card, .stAlert, .stDataFrame, .stTable, .stPlotlyChart, .stMetric, .stCheckbox, .stRadio {
+        background-color: var(--card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 12px !important;
+        padding: 8px;
+      }
+
+      /* Inputs y selects */
+      .stTextInput input, .stTextArea textarea, .stSelectbox [data-baseweb="select"],
+      .stNumberInput input, .stDateInput input, .stTimeInput input {
+        background-color: var(--card) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
         border-radius: 10px !important;
       }
 
-      /* Sidebar visual limpio */
+      /* Botones */
+      .stButton>button, .stDownloadButton>button {
+        background: var(--accent) !important;
+        color: #ffffff !important;
+        border: 0 !important;
+        border-radius: 10px !important;
+      }
+      .stButton>button:hover, .stDownloadButton>button:hover {
+        filter: brightness(1.05);
+      }
+
+      /* Sidebar */
       [data-testid="stSidebar"] .stMarkdown h1,
       [data-testid="stSidebar"] .stMarkdown h2,
       [data-testid="stSidebar"] .stMarkdown h3 {
-        color: #111111 !important;
+        color: var(--text) !important;
+      }
+      [data-testid="stSidebar"] {
+        border-right: 1px solid var(--border) !important;
       }
 
-      /* Tarjeta opcional para secciones */
-      .page-card {
-        background: #ffffff !important;
-        border: 1px solid #efefef !important;
-        border-radius: 12px !important;
-        padding: 20px !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+      /* Radio: bullets y etiquetas visibles en claro */
+      .stRadio [role="radiogroup"] label {
+        color: var(--text) !important;
       }
+      .stRadio [role="radio"] {
+        background: var(--card) !important;
+        border: 1px solid var(--border) !important;
+      }
+
+      /* Tablas/Dataframes (cabeceras y celdas) */
+      .stDataFrame thead tr th, .stDataFrame tbody tr td {
+        color: var(--text) !important;
+        background-color: var(--card) !important;
+      }
+
+      /* Imágenes y gráficos: sin filtros */
+      img, canvas, svg { filter: none !important; }
     </style>
     """,
     unsafe_allow_html=True,
