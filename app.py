@@ -52,6 +52,7 @@ PAGES = {
     "NLP: Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
     "Identificación de objetos (YOLO)": "modules.deteccion_objetos",
     "Identificación de gestos (Teachable Machine)": "modules.reconocimiento_gestos",
+    "Chatbot PDF": "modules.chatbot_pdf",
 }
 
 with st.sidebar:
