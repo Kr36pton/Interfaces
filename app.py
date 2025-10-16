@@ -1,71 +1,63 @@
 import streamlit as st
 import importlib
 
-st.set_page_config(page_title="Suite Multimedia — Herramientas IA", layout="wide")
+st.set_page_config(
+    page_title="Suite Multimedia — Herramientas IA",
+    page_icon="🧰",
+    layout="wide",
+)
 
-# Ocultar el menú de páginas automático de Streamlit y estilos generales
+# Ocultar navegación nativa autogenerada
 st.markdown(
     """
     <style>
-    /* Ocultar el menú de páginas automático de Streamlit */
-    section[data-testid="stSidebarNav"] {display: none;}
-    :root{
-        --bg:#fffaf8;
-        --card:#fff;
-        --accent:#f7d6e0;
-        --muted:#bfa6a0;
-        --gold:#cfa46b;
-    }
-    .reportview-container, .main{
-        background: var(--bg);
-    }
-    header {background: linear-gradient(90deg, rgba(247,214,224,0.25), rgba(255, 250, 245, 0.5));}
-    .css-1v0mbdj.e1fqkh3o1 {padding-top: 1rem;}
-    .stSidebar .css-1d391kg {width: 270px;}
-    .stButton>button {border-radius: 8px;}
-    .page-card {
-        background: var(--card);
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    }
-    .muted {color: var(--muted); font-size:13px;}
-    .accent-title {color: #b24d6c;}
+      section[data-testid="stSidebarNav"] {display: none;}
+      :root{ --bg:#fffaf8; --card:#ffffff; --muted:#8a7e79; }
+      .stApp, .main { background: var(--bg); }
+      .page-card { background: var(--card); border-radius:12px; padding:20px; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+      .stButton>button { border-radius:10px; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Mapeo de páginas -> módulos dentro de la carpeta `modules`
+# Cada entrada puede listar varios módulos candidatos para tolerar estructuras distintas (modules/* o src/pages/*)
 PAGES = {
-    "Inicio": "modules.inicio",
-    "Texto → Audio (gTTS)": "modules.texto_a_audio",
-    "Voz → Texto (Whisper)": "modules.voz_a_texto",
-    "OCR (Imagen → Texto)": "modules.ocr",
-    "OCR → Traducción → Audio": "modules.ocr_audio",
-    "NLP: Sentimiento, TF-IDF y Palabras clave": "modules.nlp_textblob",
-    "Detección de Objetos (YOLO)": "modules.deteccion_objetos",
-    "Reconocimiento de Gestos (Teachable Machine)": "modules.reconocimiento_gestos",
-    "Chatbot sobre PDF (LLM)": "modules.chatbot_pdf",
-    "Descripción de Imágenes y QA": "modules.interpretacion_imagen",
+    "Inicio": ["modules.inicio", "src.pages.inicio"],
+    "Texto → Audio (gTTS)": ["modules.texto_a_audio", "src.pages.texto_a_audio"],
+    "Voz → Texto (Vosk)": ["modules.voz_a_texto", "src.pages.voz_a_texto"],
+    "OCR (Imagen → Texto)": ["modules.ocr", "src.pages.ocr"],
+    "NLP: Sentimiento, TF-IDF y Palabras clave": ["modules.nlp_textblob", "src.pages.nlp_textblob"],
+    "Identificación de objetos (YOLO)": ["modules.yolo_objetos", "src.pages.yolo_objetos"],
+    "Identificación de gestos (Teachable Machine)": ["modules.gestos", "src.pages.gestos"],
+    # Si en el futuro habilitas OCR → Traducción → Audio, añade aquí su ruta.
 }
+
+def import_first(candidates):
+    last_err = None
+    for name in candidates:
+        try:
+            return importlib.import_module(name)
+        except ModuleNotFoundError as e:
+            last_err = e
+            continue
+    raise last_err or ModuleNotFoundError(f"No se pudo importar ninguno de: {candidates}")
 
 with st.sidebar:
     st.title("Navegación")
-    choice = st.radio("", list(PAGES.keys()), index=0)
-    st.markdown("---")
-    st.markdown("Estructura del proyecto: `/modules/(herramienta).py`")
-
-module_path = PAGES[choice]
-try:
-    page = importlib.import_module(module_path)
-    if hasattr(page, "render"):
-        page.render()
-    else:
-        st.error(f"El módulo {module_path} existe pero no define `render()`.")
-except ModuleNotFoundError:
-    st.error(
-        f"Error: no se encontró el módulo '{module_path}'. Asegúrate de que exista el archivo `{module_path.replace('.', '/')}.py` y de tener `modules/__init__.py`."
+    choice = st.radio(
+        "Selecciona una página:",
+        list(PAGES.keys()),
+        index=0,
+        label_visibility="collapsed",  # evita warning de accesibilidad manteniendo la UI limpia
     )
+
+module_candidates = PAGES[choice]
+try:
+    page_module = import_first(module_candidates)
+    if hasattr(page_module, "render") and callable(page_module.render):
+        page_module.render()
+    else:
+        st.error(f"El módulo seleccionado no define render(). Revisar: {module_candidates}")
 except Exception as e:
     st.error(f"Error al cargar la página '{choice}': {e}")
